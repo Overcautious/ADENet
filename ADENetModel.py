@@ -31,7 +31,8 @@ class ADENetModel(nn.Module):
                 attention_dropout_p=0.1,
                 conv_dropout_p=0.1,
                 conv_kernel_size=31,
-                half_step_residual=True,)
+                half_step_residual=True,
+                layer_type = 'MLN',)
         
 
         self.CB = CMC_ConformerBlock(encoder_dim=256,
@@ -42,7 +43,8 @@ class ADENetModel(nn.Module):
                 attention_dropout_p=0.1,
                 conv_dropout_p=0.1,
                 conv_kernel_size=31,
-                half_step_residual=True,)
+                half_step_residual=True,
+                layer_type = 'ln',)
 
         self.AsdDecoder = CMC_ConformerBlock(encoder_dim=256,
                 num_attention_heads=8,
@@ -52,7 +54,8 @@ class ADENetModel(nn.Module):
                 attention_dropout_p=0.1,
                 conv_dropout_p=0.1,
                 conv_kernel_size=31,
-                half_step_residual=True,)
+                half_step_residual=True,
+                layer_type = 'ln')
 
         #speech enhancement
         self.ConformerConv_tasnet =  ConvTasNet(norm="cLN", causal=False)

@@ -32,13 +32,13 @@ from conformer.modules import (
 from conformer.cbln import CBLNorm
 import functools
 
-def get_norm_layer(layer_type='ln', num_con=2):
-    if layer_type == 'ln':
+def get_norm_layer(layer_type_='ln', num_con=2):
+    if layer_type_ == 'ln':
         norm_layer = functools.partial(nn.LayerNorm, elementwise_affine=True)
-    elif layer_type == 'cbln':
+    elif layer_type_ == 'MLN':
         norm_layer = functools.partial(CBLNorm, elementwise_affine=True, num_con=num_con)
     else:
-        raise NotImplementedError('normalization layer [%s] is not found' % layer_type)
+        raise NotImplementedError('normalization layer [%s] is not found' % layer_type_)
 
     return norm_layer
 
@@ -79,6 +79,7 @@ class CMC_ConformerBlock(nn.Module):
             conv_kernel_size: int = 31,
             half_step_residual: bool = True,
             device: torch.device = 'cuda',
+            layer_type = 'MLN'
     ):
         super(CMC_ConformerBlock, self).__init__()
         self.device = device
@@ -166,52 +167,11 @@ class CMC_ConformerBlock(nn.Module):
                 module_factor=self.feed_forward_residual_factor,
             )
 
-        ln = get_norm_layer(layer_type='cbln', num_con=encoder_dim)
+        ln = get_norm_layer(layer_type_=layer_type, num_con=encoder_dim)
 
         self.layer =  ln(encoder_dim)
         self.layer_ =  ln(encoder_dim)
-        # self.layer =  nn.LayerNorm(encoder_dim)
-        # self.layer_ =  nn.LayerNorm(encoder_dim)
 
-        # self.sequential = nn.Sequential(
-        #     ResidualConnectionModule(
-        #         module=FeedForwardModule(
-        #             encoder_dim=encoder_dim,
-        #             expansion_factor=feed_forward_expansion_factor,
-        #             dropout_p=feed_forward_dropout_p,
-        #             device=device,
-        #         ),
-        #         module_factor=self.feed_forward_residual_factor,
-        #     ),
-        #     ResidualConnectionModule(
-        #         module=MultiHeadedSelfAttentionModule(
-        #             d_model=encoder_dim,
-        #             num_heads=num_attention_heads,
-        #             dropout_p=attention_dropout_p,
-        #             device=device,
-        #         ),
-        #     ),
-        #     ResidualConnectionModule(
-        #         module=ConformerConvModule(
-        #             in_channels=encoder_dim,
-        #             kernel_size=conv_kernel_size,
-        #             expansion_factor=conv_expansion_factor,
-        #             dropout_p=conv_dropout_p,
-        #             device=device,
-        #         ),
-        #     ),
-        #     ResidualConnectionModule(
-        #         module=FeedForwardModule(
-        #             encoder_dim=encoder_dim,
-        #             expansion_factor=feed_forward_expansion_factor,
-        #             dropout_p=feed_forward_dropout_p,
-        #             device=device,
-        #         ),
-        #         module_factor=self.feed_forward_residual_factor,
-        #     ),
-        #     nn.LayerNorm(encoder_dim),
-        # )
-        # 
 
     def forward(self, inputs: Tensor, second_input=None) -> Tensor:
         if second_input is None:        
@@ -227,11 +187,11 @@ class CMC_ConformerBlock(nn.Module):
             x1 = self.MHSA(x, second_input)
             y1 = self.MHSA_(second_input, x)
 
-            x2 = self.COV(x1, y1)
-            y2 = self.COV_(y1, x1)
+            x2 = self.COV(x1)
+            y2 = self.COV_(y1)
 
-            x3 = self.FFN2(x2, y2)
-            y3 = self.FFN2_(y2, x2)
+            x3 = self.FFN2(x2)
+            y3 = self.FFN2_(y2)
 
             x4 = self.layer(x3, y3)
             y4 = self.layer_(y3, x3)

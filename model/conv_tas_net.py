@@ -300,6 +300,7 @@ class ConvTasNet(nn.Module):
                 conv_dropout_p=0.1,
                 conv_kernel_size=31,
                 half_step_residual=True,
+                layer_type = 'ln',
             ) for _ in range(num_layers)]
         
         return nn.Sequential(*blocks)
