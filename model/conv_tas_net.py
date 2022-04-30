@@ -220,24 +220,12 @@ class ConvTasNet(nn.Module):
         # n x N x T => n x B x T
         self.proj = Conv1D(N, B, 1)
 
-        # repeat blocks
-        # n x B x T => n x B x T
-        # self.repeats = self._build_repeats(
-        #     num_repeats = 1,
-        #     num_blocks = X,
-        #     in_channels=B,
-        #     conv_channels=H,
-        #     kernel_size=P,
-        #     norm=norm,
-        #     causal=causal)
+
         
         self.repeats = self._build_conformer(num_layers=1, encoder_dim=B)
             
         # output 1x1 conv
         # n x B x T => n x N x T
-        # NOTE: using ModuleList not pytorchon list
-        # self.conv1x1_2 = torch.nn.ModuleList(
-        #     [Conv1D(B, N, 1) for _ in range(num_spks)])
         # n x B x T => n x 2N x T
         self.mask = Conv1D(B, num_spks * N, 1)
         # using ConvTrans1D: n x N x T => n x 1 x To
@@ -246,11 +234,7 @@ class ConvTasNet(nn.Module):
             N, 1, kernel_size=L, stride=L // 2, padding = L // 4, bias=True)
         self.num_spks = num_spks
 
-        # self.visualFrontend = self._build_video()
 
-        # self.visualFrontend  = visualFrontend() # Visual Frontend 
-        # self.visualTCN       = visualTCN(256)      # Visual Temporal Network TCN
-        # self.visualConv1D    = visualConv1D(256)   # Visual Temporal Network Conv1d
 
         self.up = nn.Upsample(scale_factor=32, mode='nearest')
 
@@ -265,28 +249,7 @@ class ConvTasNet(nn.Module):
             norm=norm,
             causal=causal)
 
-    # def _build_video(self):
-    #     arch = 'av_wrapper'
-    #     model_args = {
-    #         'proj_dim': [512, 512, 128],
-    #         'video_backbone': "R2Plus1D",
-    #         "video_backbone_args": {
-    #             "depth": 18
-    #         },
-    #         'audio_backbone': "Conv2D",
-    #         "audio_backbone_args": {
-    #             "depth": 10
-    #         }
-    #     }
 
-    #     pretrained_net = model.__dict__[arch](**model_args)
-    #     checkpoint_fn = 'AVID/AudioSet/AVID_Audioset_Cross-N1024_checkpoint.pth.tar'
-    #     ckp = torch.load(checkpoint_fn, map_location='cpu')
-    #     pretrained_net.load_state_dict(
-    #         {k.replace('module.', ''): ckp['model'][k]
-    #             for k in ckp['model']})
-
-    #     return pretrained_net.video_model
    
     def _build_conformer(self, num_layers, encoder_dim):
         blocks = [
