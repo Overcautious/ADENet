@@ -29,7 +29,7 @@ from conformer.modules import (
     ResidualConnectionModule_CONV,
     Linear,
 )
-from conformer.cbln import MMLNorm
+from conformer.mmLN import MMLNorm
 import functools
 
 def get_norm_layer(layer_type_='ln', num_con=2):

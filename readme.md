@@ -38,7 +38,7 @@ Then you can train ADENet in AVA end-to-end by using:
 python trainADENet.py --dataPathAVA AVADataPath ----dataPathMUSAN MUSANDataPath --savePath savePath
 ```
 
-Using parameter `--isDown, --isUp` to control  cross-modal circulant fusion
+Using parameter `--isDown, --isDown` to control  cross-modal circulant fusion
 ***
 
 ### Citation

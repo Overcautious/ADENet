@@ -19,13 +19,13 @@ from typing import Tuple
 
 from conformer.activation import Swish, GLU
 from conformer.modules import Transpose
-from conformer.cbln import MMLNorm
+from conformer.mmLN import MMLNorm
 import functools
 
 def get_norm_layer(layer_type='ln', num_con=2):
     if layer_type == 'ln':
         norm_layer = functools.partial(nn.LayerNorm, elementwise_affine=True)
-    elif layer_type == 'cbln':
+    elif layer_type == 'MLN':
         norm_layer = functools.partial(MMLNorm, elementwise_affine=True, num_con=num_con)
     else:
         raise NotImplementedError('normalization layer [%s] is not found' % layer_type)
@@ -147,7 +147,7 @@ class ConformerConvModule(nn.Module):
         assert expansion_factor == 2, "Currently, Only Supports expansion_factor 2"
 
         self.device = device
-        ln = get_norm_layer(layer_type='cbln', num_con=in_channels)
+        ln = get_norm_layer(layer_type='MLN', num_con=in_channels)
         self.ln = ln(in_channels)
         self.transpose = Transpose(shape=(1, 2))
         self.pointWishConv1d = PointwiseConv1d(in_channels, in_channels * expansion_factor, stride=1, padding=0, bias=True)

@@ -18,13 +18,13 @@ from torch import Tensor
 
 from conformer.activation import Swish
 from conformer.modules import Linear
-from conformer.cbln import MMLNorm
+from conformer.mmLN import MMLNorm
 import functools
 
 def get_norm_layer(layer_type='ln', num_con=2):
     if layer_type == 'ln':
         norm_layer = functools.partial(nn.LayerNorm, elementwise_affine=True)
-    elif layer_type == 'cbln':
+    elif layer_type == 'MLN':
         norm_layer = functools.partial(MMLNorm, elementwise_affine=True, num_con=num_con)
     else:
         raise NotImplementedError('normalization layer [%s] is not found' % layer_type)
@@ -60,7 +60,7 @@ class FeedForwardModule(nn.Module):
     ) -> None:
         super(FeedForwardModule, self).__init__()
         self.device = device
-        ln = get_norm_layer(layer_type='cbln', num_con=encoder_dim)
+        ln = get_norm_layer(layer_type='MLN', num_con=encoder_dim)
         # self.sequential = nn.Sequential(
         #     # nn.LayerNorm(encoder_dim),
         #     ln(encoder_dim),
