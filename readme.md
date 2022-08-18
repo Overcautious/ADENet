@@ -1,5 +1,6 @@
 # ADENet
-Pytorch implementation of the article [Look&Listen: Multi-Modal Correlation Learning for Active Speaker Detection and Speech Enhancement](https://ieeexplore.ieee.org/document/9858007)
+This repository is for ADENet introduced in the following paper: J. Xiong, Y. Zhou, P. Zhang, L. Xie, W. Huang and Y. Zha, "[Look&Listen: Multi-Modal Correlation Learning for Active Speaker Detection and Speech Enhancement](https://ieeexplore.ieee.org/document/9858007)", (IEEE Transactions on Multimedia, 2022)
+
 
 Project link:[ADENet](https://overcautious.github.io/ADENet/)
 ![ADENet.png](utils/ADENet.png)
@@ -46,12 +47,15 @@ Using parameter `--isDown, --isDown` to control  cross-modal circulant fusion
 
 Please cite the following if our paper or code is helpful to your research.
 ```
-@article{xiong2022look,
-  title={Look$\backslash$\&Listen: Multi-Modal Correlation Learning for Active Speaker Detection and Speech Enhancement},
+@ARTICLE{9858007,
   author={Xiong, Junwen and Zhou, Yu and Zhang, Peng and Xie, Lei and Huang, Wei and Zha, Yufei},
-  journal={arXiv preprint arXiv:2203.02216},
-  year={2022}
-}
+  journal={IEEE Transactions on Multimedia}, 
+  title={Look&amp;listen: Multi-Modal Correlation Learning for Active Speaker Detection and Speech Enhancement}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={1-14},
+  doi={10.1109/TMM.2022.3199109}}
 ```
 
 This is my first open-source work, please let me know if I can future improve in this repositories or there is anything wrong in our work. Thanks for your support!
